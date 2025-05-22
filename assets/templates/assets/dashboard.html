@@ -1,0 +1,59 @@
+{% extends 'assets/base.html' %}
+{% block title %}Главная{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Статистика активов</h2>
+            <div class="row mt-4">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Всего активов</h5>
+                            <p class="card-text display-6">{{ total_assets }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% for status in assets_by_status %}
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ status.get_status_display }}</h5>
+                            <p class="card-text display-6">{{ status.count }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <h2>Активы по категориям</h2>
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Категория</th>
+                                    <th>Количество</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for type in assets_by_type %}
+                                <tr>
+                                    <td>{{ type.type__name }}</td>
+                                    <td>{{ type.count }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

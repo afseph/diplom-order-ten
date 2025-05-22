@@ -1,0 +1,123 @@
+{% extends 'assets/base.html' %}
+{% block title %}Активы{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Список активов</h2>
+                <a href="{% url 'assets:asset_create' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-lg me-2"></i>Добавить актив
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-3">
+                            <select name="status" class="form-select">
+                                <option value="">Все статусы</option>
+                                {% for status in Asset.AssetStatus %}
+                                <option value="{{ status.0 }}" {% if request.GET.status == status.0 %}selected{% endif %}>
+                                    {{ status.1 }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select name="type" class="form-select">
+                                <option value="">Все категории</option>
+                                {% for type in types %}
+                                <option value="{{ type.id }}" {% if request.GET.type == type.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ type.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select name="location" class="form-select">
+                                <option value="">Все локации</option>
+                                {% for location in locations %}
+                                <option value="{{ location.id }}" {% if request.GET.location == location.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ location.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-funnel me-2"></i>Применить фильтр
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Название</th>
+                                    <th>Категория</th>
+                                    <th>Серийный номер</th>
+                                    <th>Статус</th>
+                                    <th>Локация</th>
+                                    <th>Ответственный</th>
+                                    <th>Дата покупки</th>
+                                    <th>Стоимость</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for asset in assets %}
+                                <tr>
+                                    <td>{{ asset.name }}</td>
+                                    <td>{{ asset.type.name }}</td>
+                                    <td>{{ asset.serial_number }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ asset.status|lower }}">
+                                        {{ asset.get_status_display }}
+                                    </span>
+                                    </td>
+                                    <td>{{ asset.location.name }}</td>
+                                    <td>{{ asset.responsible|default:"-" }}</td>
+                                    <td>{{ asset.purchase_date }}</td>
+                                    <td>{{ asset.value }} руб.</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{% url 'assets:asset_detail' asset.pk %}" class="btn btn-sm btn-info">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            {% if request.user.is_staff %}
+                                            <a href="{% url 'assets:asset_update' asset.pk %}" class="btn btn-sm btn-warning">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a href="{% url 'assets:asset_delete' asset.pk %}" class="btn btn-sm btn-danger" onclick="return confirm('Вы уверены, что хотите удалить этот актив?')">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
